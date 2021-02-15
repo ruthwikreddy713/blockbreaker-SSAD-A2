@@ -1,3 +1,4 @@
+
 import os
 from parts import *
 def printboard():
@@ -13,7 +14,7 @@ def printboard():
 	for i in range(0,40):
 		print('\x1b[0;30;41m' + " " + '\x1b[0m', end="")
 		for j in range(118):
-			if(board[j][i]!=' '):
+			if(board[j][i]!=''):
 				print('\x1b[0;30;36m' + str(board[j][i]) + '\x1b[0m', end="")
 			else:
 				print(" ", end="")
