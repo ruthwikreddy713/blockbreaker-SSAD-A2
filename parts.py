@@ -28,7 +28,7 @@ class Ball:
 		self.x=x
 		self.y=y
 
-paddle= Paddle(randint(0,115),5,3,0)
+paddle= Paddle(randint(0,113),7,3,0)
 #board[10][10]="Y"
 #print((board[10][10]),end="en")
 for i in range(paddle.lent):
