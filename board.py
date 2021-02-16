@@ -5,9 +5,9 @@ def printboard():
 	os.system('clear')
 	print("\n")
 	print("\tLives : ",end=" ")
-	print("\t\t",end=" ")
+	print("\t" + str(paddle.lives) ,end="\t")
 	print("Time : ",end=" ")
-	print("\t\t",end="\n\n")
+	print("\t" + str(paddle.time),end="\n\n")
 	for i in range(0, 120):
 		print('\x1b[0;30;41m' + " " + '\x1b[0m', end="")
 	print("")
