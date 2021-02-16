@@ -38,7 +38,8 @@ while(True):
 				prevx=ball.px
 				prevy=ball.py
 				ballmov=True
-				board[prevx][prevy]="X"	
+				board[prevx][prevy]="X"
+				ball.move()	
 		elif(inp=='q'):
 			break
 	else:	
@@ -51,7 +52,9 @@ while(True):
 	#current=time.time()
 		if(current-start > 0.05):
 			#ball.collisionwithframe()
-			if(ball.move()==False):
+			if(ball.collisionwithpaddle()==False):
 				ballmov=False
+			else:
+				ball.move()
 			start=time.time()
 	printboard()

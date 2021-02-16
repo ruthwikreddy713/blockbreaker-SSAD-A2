@@ -65,22 +65,6 @@ class Ball:
 			#self.py
 			if(self.py + self.vy <=0):
 				self.vy=-self.vy
-			else:
-				#New ball
-				for i in range(paddle.lent):
-					board[paddle.x+i][39]=""
-				paddle.lives=paddle.lives-1
-				paddle.x = randint(0,112)
-				paddle.lent = 7
-				for i in range(paddle.lent):
-					board[paddle.x+i][39]="X"
-				board[ball.px][ball.py]=""
-				ball.px=randint(paddle.x,paddle.x + paddle.lent)
-				ball.py=39
-				ball.vx=0
-				ball.vy=0
-				board[ball.px][ball.py]="*"
-				return False
 		board[self.px][self.py]="*"
 		return True
 	def release(self):
@@ -91,7 +75,7 @@ class Ball:
 				self.vx=3
 			else:
 				self.vx = -3+((paddle.x + 2)-self.px)
-			self.vy = -2
+			self.vy = -1
 			return True
 		else:
 			return False
@@ -100,6 +84,29 @@ class Ball:
 			self.vx= -self.vx
 		if (self.py <= 0):
 			self.vy= -self.vy'''
-		#def collisionwithpaddle(self):
+	def collisionwithpaddle(self):
+		if self.py==39 and self.px >= paddle.x and self.px <= paddle.x + paddle.lent:
+			self.vy = -self.vy
+			if (self.px > paddle.x + (paddle.lent)//2):
+				self.vx = self.vx + (paddle.x+paddle.lent - self.px)
+			else:
+				self.vx = self.vx - (paddle.x + (paddle.lent//2)-self.px)
+		elif self.py==39:
+				#New ball
+			for i in range(paddle.lent):
+				board[paddle.x+i][39]=""
+			paddle.lives=paddle.lives-1
+			paddle.x = randint(0,112)
+			paddle.lent = 7
+			for i in range(paddle.lent):
+				board[paddle.x+i][39]="X"
+			board[ball.px][ball.py]=""
+			ball.px=randint(paddle.x,paddle.x + paddle.lent)
+			ball.py=39
+			ball.vx=0
+			ball.vy=0
+			board[ball.px][ball.py]="*"
+			return False
+		return True 
 ball = Ball(randint(paddle.x,paddle.x + paddle.lent),39,0,0)
 board[ball.px][ball.py]="*"
