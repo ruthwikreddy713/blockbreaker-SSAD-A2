@@ -42,12 +42,20 @@ class Ball:
 		self.py=py
 		self.vx=vx
 		self.vy=vy
+	def moveunreleasedleft(self):
+		if (paddle.x >=1 and self.py==39):
+			self.px = self.px -1 
+			board[self.px][self.py]="*"
+	def moveunreleasedright(self):
+		if(paddle.x + paddle.lent< 118):
+			self.px = self.px + 1
+			board[self.px][self.py]="*"
 	def move(self):
 		if (self.px >= paddle.x and self.py == 39 and self.px <= paddle.x + paddle.lent): 
 			board[self.px][self.py]="X"
 		else:
 			board[self.px][self.py]=""
-		if self.px + self.vx < 119 and self.px + self.vx >=0 :
+		if self.px + self.vx < 118 and self.px + self.vx >=0 :
 			self.px=self.px + self.vx
 		else:
 			self.vx = -self.vx
@@ -55,9 +63,26 @@ class Ball:
 			self.py = self.py + self.vy
 		else:
 			#self.py
-			#if(self.py + self.vy <=0):
-			self.vy=-self.vy
+			if(self.py + self.vy <=0):
+				self.vy=-self.vy
+			else:
+				#New ball
+				for i in range(paddle.lent):
+					board[paddle.x+i][39]=""
+				paddle.lives=paddle.lives-1
+				paddle.x = randint(0,112)
+				paddle.lent = 7
+				for i in range(paddle.lent):
+					board[paddle.x+i][39]="X"
+				board[ball.px][ball.py]=""
+				ball.px=randint(paddle.x,paddle.x + paddle.lent)
+				ball.py=39
+				ball.vx=0
+				ball.vy=0
+				board[ball.px][ball.py]="*"
+				return False
 		board[self.px][self.py]="*"
+		return True
 	def release(self):
 		if (self.px >= paddle.x and self.py == 39 and self.px <= paddle.x + paddle.lent): 
 			if (self.px > paddle.x + 2):
