@@ -6,11 +6,12 @@ for i in range(120):
 	for j in range(40):
 		board[i][j]=""
 class Paddle:
-	def __init__(self,x,lent,lives,time):
+	def __init__(self,x,lent,lives,time,score):
 		self.x=x
 		self.lent=lent 
 		self.lives=lives
 		self.time=time
+		self.score=score
 	def left(self):
 		if(self.x>=1):
 			#self.x = self.x - 1
@@ -31,17 +32,19 @@ class Paddle:
 				#swap(board[self.x+i][39],board[self.x][39])
 			self.x= self.x +1 
 			board[self.x-1][39]=""
-paddle= Paddle(randint(0,113),7,3,0)
+paddle= Paddle(#randint(0,113)
+	85,7,3,0,0)
 #board[10][10]="Y"
 #print((board[10][10]),end="en")
 for i in range(paddle.lent):
 	board[paddle.x+i][39]="X"
 class Ball:
-	def __init__(self,px,py,vx,vy):
+	def __init__(self,px,py,vx,vy,prev):
 		self.px=px
 		self.py=py
 		self.vx=vx
 		self.vy=vy
+		self.prev=prev
 	def moveunreleasedleft(self):
 		if (paddle.x >=1 and self.py==39):
 			self.px = self.px -1 
@@ -54,7 +57,7 @@ class Ball:
 		if (self.px >= paddle.x and self.py == 39 and self.px <= paddle.x + paddle.lent): 
 			board[self.px][self.py]="X"
 		else:
-			board[self.px][self.py]=""
+			board[self.px][self.py]=self.prev
 		if self.px + self.vx < 118 and self.px + self.vx >=0 :
 			self.px=self.px + self.vx
 		else:
@@ -65,16 +68,17 @@ class Ball:
 			#self.py
 			if(self.py + self.vy <=0):
 				self.vy=-self.vy
+		self.prev=board[self.px][self.py]
 		board[self.px][self.py]="*"
 		return True
 	def release(self):
 		if (self.px >= paddle.x and self.py == 39 and self.px <= paddle.x + paddle.lent): 
-			if (self.px > paddle.x + 2):
-				self.vx= 3 - (self.px - (paddle.x + 2))
-			elif (self.px == (paddle.x + 2)):
-				self.vx=3
+			if (self.px > paddle.x + paddle.lent//2):
+				self.vx= paddle.lent//2 - (self.px - (paddle.x + paddle.lent//2))
+			elif (self.px == (paddle.x + paddle.lent//2)):
+				self.vx=0
 			else:
-				self.vx = -3+((paddle.x + 2)-self.px)
+				self.vx = -paddle.lent//2+((paddle.x + paddle.lent//2)-self.px)
 			self.vy = -1
 			return True
 		else:
@@ -88,9 +92,11 @@ class Ball:
 		if self.py==39 and self.px >= paddle.x and self.px <= paddle.x + paddle.lent:
 			self.vy = -self.vy
 			if (self.px > paddle.x + (paddle.lent)//2):
-				self.vx = self.vx + (paddle.x+paddle.lent - self.px)
+				self.vx = 1+self.vx + paddle.lent//2 - (paddle.x+paddle.lent - self.px)
+				#paddle.score=self.vx
 			else:
 				self.vx = self.vx - (paddle.x + (paddle.lent//2)-self.px)
+				#paddle.score=self.vx
 		elif self.py==39:
 				#New ball
 			for i in range(paddle.lent):
@@ -108,5 +114,90 @@ class Ball:
 			board[ball.px][ball.py]="*"
 			return False
 		return True 
-ball = Ball(randint(paddle.x,paddle.x + paddle.lent),39,0,0)
+ball = Ball(#randint(paddle.x,paddle.x + paddle.lent)
+	paddle.x+paddle.lent//2,39,0,0,"")
 board[ball.px][ball.py]="*"
+class Bricks:
+	def __init__ (self,x,y,strength):
+		self.strength=strength
+		self.x=x
+		self.y=y
+	def collisionwithball(self):
+		if ball.py >= self.y -2  and ball.py < self.y+1 and ball.vy>0:
+			#print(self.x,self.y,ball.py,ball.px)
+			if(ball.px < self.x - 1 and ball.vx > 0) or (ball.px > self.x + 1 and ball.vx < 0):
+				if(ball.px + ball.vx >= self.x - 1 and ball.vx>0) or (ball.px + ball.vx <= self.x + 1 and ball.vx <0):
+					if(ball.py+ball.vy == self.y -1 or ball.py+ball.vy==self.y + 1):
+						#print("check\ncheck\ncheck\n")
+						if(ball.px + ball.vx == self.x - 1 and ball.vx > 0) or(ball.px + ball.vx == self.x + 1 and ball.vx<0):
+							#ball.px = ball.px+ball.vx
+							if(ball.py+ball.vy==self.y-1):  #collision at posn 1,3
+								#print("Coll at 1,3")
+								ball.vy= -ball.vy
+								return True
+							elif(ball.py+ball.vy==self.y+1):   #collision at posn7
+								#print("Coll at 7", self.x, self.y)
+								ball.vx = -ball.vx
+								return True
+						elif(ball.py+ball.vy == self.y - 1): #collision at posn 2
+							#print("Coll at 2")
+							board[ball.px][ball.py]=ball.prev
+							ball.px = self.x
+							ball.vy = -ball.vy
+							return True
+						else:
+							ball.vx=-ball.vx
+							return True
+					else:
+						#print("Horizontal change")
+						#board[ball.px][ball.py]=ball.prev
+						#ball.move()
+						ball.vx = - ball.vx
+						return True
+			if(ball.vx==0 and ball.px >= self.x-1 and ball.px <=self.x+1 and ball.py+ball.vy == self.y -1):
+				#print("How")
+				ball.vy=-ball.vy
+				return True
+			if(ball.px >= self.x -1 and ball.px <=self.x+1 and ball.py <=self.y+1 and ball.py <= self.y -1):
+				if(ball.py==self.y):
+					ball.vx=-ball.vx
+				else:
+					ball.vy=-ball.vy
+				return True
+		return False
+	def brokenbrick(self):
+		paddle.score=paddle.score+100
+		board[self.x][self.y]=""
+		board[self.x+1][self.y]=""
+		board[self.x-1][self.y]=""
+		board[self.x][self.y+1]=""
+		board[self.x+1][self.y+1]=""
+		board[self.x-1][self.y+1]=""
+		board[self.x][self.y-1]=""
+		board[self.x+1][self.y-1]=""
+		board[self.x-1][self.y-1]=""
+class Unbreakablebrick(Bricks):
+	pass
+	'''def __init__(self):
+		Bricks.__init__(self)
+		Bricks.strength=-1'''
+bricks=[]
+for i in range(15):
+	brick=Unbreakablebrick(12+6*i,7,2)
+	board[11+6*i][7]="|"
+	board[12+6*i][7]=" "
+	board[13+(6*i)][7]="|"
+	for j in range(3):
+		board[11+(6*i)+j][6]="$"
+		board[11+(6*i)+j][8]="$"
+	bricks.append(brick)
+#bricks2=[]
+for i in range(10):
+	brick=Bricks(21+6*i,11,1)
+	board[20+6*i][11]="|"
+	board[21+6*i][11]=" "
+	board[22+(6*i)][11]="|"
+	for j in range(3):
+		board[20+(6*i)+j][10]="$"
+		board[20+(6*i)+j][12]="$"	
+	bricks.append(brick)

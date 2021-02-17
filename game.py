@@ -55,6 +55,15 @@ while(True):
 			if(ball.collisionwithpaddle()==False):
 				ballmov=False
 			else:
+				for brick in bricks:
+					if(brick.strength>0):
+						if(brick.collisionwithball()==True):
+							brick.strength=brick.strength-1
+							if(brick.strength==0):
+								brick.brokenbrick()
+							elif(brick.strength>0 and brick.strength<=2):
+								paddle.score=paddle.score+100
+							break
 				ball.move()
 			start=time.time()
 	printboard()
