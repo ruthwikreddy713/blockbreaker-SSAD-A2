@@ -123,6 +123,7 @@ class Bricks:
 		self.x=x
 		self.y=y
 	def collisionwithball(self):
+		#print(self.y,self.x,ball.px,ball.py)
 		if ball.py >= self.y -2  and ball.py < self.y+1 and ball.vy>0:
 			#print(self.x,self.y,ball.py,ball.px)
 			if(ball.px < self.x - 1 and ball.vx > 0) or (ball.px > self.x + 1 and ball.vx < 0):
@@ -164,6 +165,48 @@ class Bricks:
 				else:
 					ball.vy=-ball.vy
 				return True
+		if ball.py >= self.y -1 and ball.py <= self.y +2 and ball.vy<0:
+			#print("ok ",self.y,self.x,ball.px,ball.py)
+			#print(self.y,self.x,ball.px,ball.py)
+			if(ball.px < self.x - 1 and ball.vx > 0) or (ball.px > self.x + 1 and ball.vx < 0):
+				if(ball.px + ball.vx >= self.x - 1 and ball.vx>0) or (ball.px + ball.vx <= self.x + 1 and ball.vx <0):
+					if(ball.py+ball.vy == self.y -1 or ball.py+ball.vy==self.y + 1):
+						#print("check\ncheck\ncheck\n")
+						if(ball.px + ball.vx == self.x - 1 and ball.vx > 0) or(ball.px + ball.vx == self.x + 1 and ball.vx<0):
+							#ball.px = ball.px+ball.vx
+							if(ball.py+ball.vy==self.y+1):  #collision at posn 1,3
+								#print("Coll at 1,3")
+								ball.vy= -ball.vy
+								return True
+							elif(ball.py+ball.vy==self.y-1):   #collision at posn7
+								#print("Coll at 7", self.x, self.y)
+								ball.vx = -ball.vx
+								return True
+						elif(ball.py+ball.vy == self.y + 1): #collision at posn 2
+							#print("Coll at 2")
+							#board[ball.px][ball.py]=ball.prev
+							#ball.px = self.x
+							ball.vy = -ball.vy
+							return True
+						else:
+							ball.vx=-ball.vx
+							return True
+					else:
+						#print("Horizontal change")
+						#board[ball.px][ball.py]=ball.prev
+						#ball.move()
+						ball.vx = - ball.vx
+						return True
+			if(ball.vx==0 and ball.px >= self.x-1 and ball.px <=self.x+1 and ball.py+ball.vy == self.y +1):
+				#print("How")
+				ball.vy=-ball.vy
+				return True
+			if(ball.px >= self.x -1 and ball.px <=self.x+1 and ball.py <=self.y+1 and ball.py <= self.y -1):
+				if(ball.py==self.y):
+					ball.vx=-ball.vx
+				else:
+					ball.vy=-ball.vy
+				return True
 		return False
 	def brokenbrick(self):
 		paddle.score=paddle.score+100
@@ -192,7 +235,7 @@ for i in range(15):
 		board[11+(6*i)+j][8]="$"
 	bricks.append(brick)
 #bricks2=[]
-for i in range(10):
+for i in range(15):
 	brick=Bricks(21+6*i,11,1)
 	board[20+6*i][11]="|"
 	board[21+6*i][11]=" "
