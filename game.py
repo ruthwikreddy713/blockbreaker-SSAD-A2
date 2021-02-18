@@ -56,9 +56,10 @@ while(True):
 				ballmov=False
 			else:
 				for brick in bricks:
-					if(brick.strength>0):
+					if(brick.strength!=0):
 						if(brick.collisionwithball()==True):
 							brick.strength=brick.strength-1
+							brick.printbricks()
 							if(brick.strength==0):
 								brick.brokenbrick()
 							elif(brick.strength>0 and brick.strength<=2):

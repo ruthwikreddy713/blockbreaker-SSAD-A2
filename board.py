@@ -2,7 +2,7 @@
 import os
 from parts import *
 def printboard():
-#	os.system('clear')
+	os.system('clear')
 	print("\n")
 	print("\tLives : ",end=" ")
 	print("\t" + str(paddle.lives) ,end="\t")
