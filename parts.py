@@ -43,12 +43,13 @@ paddle= Paddle(#randint(0,113)
 for i in range(paddle.lent):
 	board[paddle.x+i][39]="X"
 class Ball:
-	def __init__(self,px,py,vx,vy,prev):
+	def __init__(self,px,py,vx,vy,prev,passthrough):
 		self.px=px
 		self.py=py
 		self.vx=vx
 		self.vy=vy
 		self.prev=prev
+		self.passthrough=passthrough
 	def moveunreleasedleft(self):
 		if (paddle.x >=1 and self.py==39):
 			self.px = self.px -1 
@@ -101,25 +102,28 @@ class Ball:
 			else:
 				self.vx = self.vx - (paddle.x + (paddle.lent//2)-self.px)
 				#paddle.score=self.vx
+			return 1
 		elif self.py==39:
+			return 0
+		return 2
+	def newlife(self):
 				#New ball
-			for i in range(paddle.lent):
-				board[paddle.x+i][39]=""
-			paddle.lives=paddle.lives-1
-			paddle.x = randint(0,112)
-			paddle.lent = 7
-			for i in range(paddle.lent):
-				board[paddle.x+i][39]="X"
-			board[ball.px][ball.py]=""
-			ball.px=randint(paddle.x,paddle.x + paddle.lent)
-			ball.py=39
-			ball.vx=0
-			ball.vy=0
-			board[ball.px][ball.py]="*"
-			return False
-		return True 
+		for i in range(paddle.lent):
+			board[paddle.x+i][39]=""
+		paddle.lives=paddle.lives-1
+		paddle.x = randint(0,112)
+		paddle.lent = 7
+		for i in range(paddle.lent):
+			board[paddle.x+i][39]="X"
+		board[ball.px][ball.py]=""
+		ball.px=randint(paddle.x,paddle.x + paddle.lent)
+		ball.py=39
+		ball.vx=0
+		ball.vy=0
+		ball.passthrough=0
+		board[ball.px][ball.py]="*"
 ball = Ball(#randint(paddle.x,paddle.x + paddle.lent)
-	paddle.x+paddle.lent//2,39,0,0,"")
+	paddle.x+paddle.lent - 1,39,0,0,"",0)
 board[ball.px][ball.py]="*"
 class Bricks:
 	def __init__ (self,x,y,strength):
@@ -246,7 +250,7 @@ class Unbreakablebrick(Bricks):
 		Bricks.strength=-1'''
 bricks=[]
 for i in range(15):
-	brick=Unbreakablebrick(12+6*i,7,2)
+	brick=Bricks(12+6*i,7,2)
 	board[11+6*i][7]= Fore.MAGENTA + "|"
 	board[12+6*i][7]= Fore.MAGENTA + " "
 	board[13+(6*i)][7]=Fore.MAGENTA + "|"
@@ -257,7 +261,7 @@ for i in range(15):
 #bricks2=[]
 for i in range(15):
 	if(i%4==0):
-		brick=Bricks(21+6*i,11,-1)
+		brick=Unbreakablebrick(21+6*i,11,-1)
 		board[20+6*i][11]=Fore.RED + "|"
 		board[21+6*i][11]=Fore.RED + " "
 		board[22+(6*i)][11]=Fore.RED + "|"
@@ -275,7 +279,7 @@ for i in range(15):
 			board[20+(6*i)+j][12]=Fore.GREEN + "$"	
 		bricks.append(brick)
 	else:
-		brick=Unbreakablebrick(21+6*i,11,1)
+		brick=Bricks(21+6*i,11,1)
 		board[20+6*i][11]= "|"
 		board[21+6*i][11]= " "
 		board[22+(6*i)][11]= "|"
