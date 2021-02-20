@@ -60,7 +60,7 @@ while(True):
 				ballmov=False
 				for powerup in powerupss:
 					board[powerup.x][powerup.y]=""
-				board[ball.px][ball.py]=0
+				board[ball.px][ball.py]=""
 				ball.prev="X"
 				ball.newlife()
 				powerupss.clear()

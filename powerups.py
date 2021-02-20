@@ -44,8 +44,6 @@ class shrinkpaddle(powerups):
 			board[paddle.x + paddle.lent - 1][39]=""
 			paddle.lent = paddle.lent - 2
 			paddle.x=paddle.x+1
-		else:
-			self.active=3
 	def deactivate(self):
 		board[paddle.x-1][39]="X"
 		board[paddle.x+paddle.lent][39]="X"		
