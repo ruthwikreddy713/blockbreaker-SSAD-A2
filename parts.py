@@ -118,14 +118,14 @@ class Ball:
 		paddle.lent = 7
 		for i in range(paddle.lent):
 			board[paddle.x+i][39]="X"
-		board[ball.px][ball.py]=""
-		ball.px=randint(paddle.x,paddle.x + paddle.lent-1)
-		ball.py=39
-		ball.vx=0
-		ball.vy=0
-		ball.passthrough=0
-		ball.prev=board[ball.px][ball.py]
-		board[ball.px][ball.py]="*"
+		board[self.px][self.py]=""
+		self.px=randint(paddle.x,paddle.x + paddle.lent-1)
+		self.py=39
+		self.vx=0
+		self.vy=0
+		self.passthrough=0
+		self.prev=board[self.px][self.py]
+		board[self.px][self.py]="*"
 ball = Ball(randint(paddle.x,paddle.x + paddle.lent - 1),39,0,0,"",0)
 board[ball.px][ball.py]="*"
 class Bricks:

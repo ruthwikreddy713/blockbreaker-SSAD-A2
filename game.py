@@ -13,7 +13,7 @@ while(True):
 	if(current - astart > 1):
 		paddle.time=paddle.time+1
 		astart = time.time()
-	if(paddle.lives==0 or brokenbricks==len(bricks) or paddle.time>500):
+	if(paddle.lives==0 or paddle.time>500):
 		print("┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n",
 			"███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀\n",
 			"██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼█┼┼┼██┼██┼┼┼\n",
@@ -26,8 +26,15 @@ while(True):
 			"██┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼\n",
 			"██┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼██┼┼┼┼┼██┼\n",
 			"███▄▄▄███┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼██▄\n",
-			"┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n")
+			"┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n",
+			"You Lost\n")
 		break
+	elif(brokenbricks==len(bricks)):
+		print(" ___ _   _  ___ ___ ___  ___ ___ \n",
+			"/ __| | | |/ __/ __/ _ \/ __/ __|\n",
+			"\__ \ |_| | (_| (_|  __/\__ \__ \n",
+			"|___/\__,_|\___\___\___||___/___/)\n")
+		break		
 	inp = input_to(Get())
 	if (ballmov==False):
 		if(inp=='a'):
@@ -59,6 +66,17 @@ while(True):
 			if(val==0):
 				ballmov=False
 				for powerup in powerupss:
+					if(powerup.active==2):	
+						if(powerup.name=='S'):
+							shrinkpaddle.deactivate(powerup)
+						elif(powerup.name=='F'):
+							fastball.deactivate(powerup)
+						elif(powerup.name=='E'):
+							expandpaddle.deactivate(powerup)
+						elif(powerup.name=='T'):
+							passthrough.deactivate(powerup)
+						elif(powerup.name=='P'):
+							paddlegrab.deactivate(powerup)						
 					board[powerup.x][powerup.y]=""
 				board[ball.px][ball.py]=""
 				ball.prev="X"
@@ -117,23 +135,23 @@ while(True):
 										powerup=powerups(brick.x,brick.y,"",current,"P",1)
 										powerupss.append(powerup)
 										board[brick.x][brick.y]="P"'''									
-									if(randnum<=15):
+									if(randnum<=20):
 										powerup=powerups(brick.x,brick.y,"",current,"E",1)
 										powerupss.append(powerup)
 										board[brick.x][brick.y]="E"
-									elif(randnum<=30):
+									elif(randnum<=40):
 										powerup=powerups(brick.x,brick.y,"",current,"S",1)
 										powerupss.append(powerup)
 										board[brick.x][brick.y]="S"
-									elif(randnum<=45):
+									elif(randnum<=60):
 										powerup=powerups(brick.x,brick.y,"",current,"F",1)
 										powerupss.append(powerup)
 										board[brick.x][brick.y]="F"
-									elif(randnum<=60):	
+									elif(randnum<=80):	
 										powerup=powerups(brick.x,brick.y,"",current,"T",1)
 										powerupss.append(powerup)
 										board[brick.x][brick.y]="T"
-									elif(randnum<=75):
+									elif(randnum<=100):
 										powerup=powerups(brick.x,brick.y,"",current,"P",1)
 										powerupss.append(powerup)
 										board[brick.x][brick.y]="P"
