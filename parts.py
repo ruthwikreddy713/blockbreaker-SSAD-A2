@@ -128,12 +128,6 @@ class Ball:
 		self.prev=board[self.px][self.py]
 		board[self.px][self.py]="*"
 	def newlevel(self):
-		for i in range(paddle.lent):
-			board[paddle.x+i][39]=""
-		paddle.x = randint(0,112)
-		paddle.lent = 7
-		for i in range(paddle.lent):
-			board[paddle.x+i][39]="X"
 		board[self.px][self.py]=""
 		self.px=randint(paddle.x,paddle.x + paddle.lent-1)
 		self.py=39
@@ -267,42 +261,31 @@ class Unbreakablebrick(Bricks):
 	'''def __init__(self):
 		Bricks.__init__(self)
 		Bricks.strength=-1'''
-class UFO:
-	def __init__(self,x,y,strength,lent):
-		self.x=x
-		self.y=y
-		self.strength=strength
-		self.lent=lent
+class UFO(Bricks):
 	def moveleft(self):
 		if(self.x>=1):	
-			for i in range(self.lent):
+			for i in range(3):
 				for j in range(3):
-					temp= board[self.x+i][2+j]
-					board[self.x+i][2+j]=board[self.x+i-1][2+j]
-					board[self.x+i-1][2+j]=temp
-					#board[self.x+i-1][39]="X"
+					temp=board[self.x-2+i][3+j]
+					board[self.x-2+i][3+j]=board[self.x-1+i][3+j]
+					board[self.x-1+i][3+j]=temp
 			self.x= self.x-1
 	def moveright(self):
-		if(self.x + self.lent< 118):
-			#self.x= self.x +1 
-			for i in range(1,self.lent+1):
+		if(self.x + 3< 118):
+			for i in range(3):
 				for j in range(3):
-					temp=board[self.x][2+j]
-					board[self.x][2+j]=board[self.x+i][2+j]
-					board[self.x+i][2+j]=temp
-				#swap(board[self.x+i][39],board[self.x][39])
-		self.x= self.x +1 	 
-	def initialse(self):
-		for i in range(self.lent):
-			board[paddle.x][2]="X"
-			board[paddle.x][4]="X"
-		board[paddle.X][3]="X"
-		board[paddle.X+1][3]="U"
-		board[paddle.X+2][3]="F"
-		board[paddle.x+3][3]="O"
-		board[paddle.x+4][3]="O"
-		board[paddle.x+5][3]="O"
-		board[paddle.x+6][3]="X"
+					temp=board[self.x+2-i][3+j]
+					board[self.x+2-i][3+j]=board[self.x+1-i][3+j]
+					board[self.x+1-i][3+j]=temp
+			self.x= self.x+1
+	def initialise(self):
+		board[self.x-1][self.y]="U"
+		board[self.x][self.y]="F"
+		board[self.x+1][self.y]="O"
+		for i in range(3):
+			board[self.x-1+i][self.y-1]="X"
+			board[self.x-1+i][self.y+1]="X"
+ufo=UFO(paddle.x+2,4,3)
 class Bomb:
 	def __init__(self,x,y,prev):
 		self.x=x
@@ -399,4 +382,59 @@ def level2bricks():
 				board[20+(6*i)+j][10]="$"
 				board[20+(6*i)+j][12]="$"
 			bricks.append(brick)
+	return bricks
+def level3bricks():
+	bricks=[]
+	for i in range(15):
+		if(i%4==0):
+			brick=Unbreakablebrick(21+6*i,15,-1)
+			board[20+6*i][15]=Fore.RED + "|"
+			board[21+6*i][15]=Fore.RED + " "
+			board[22+(6*i)][15]=Fore.RED + "|"
+			for j in range(3):
+				board[20+(6*i)+j][14]=Fore.RED + "$"
+				board[20+(6*i)+j][16]=Fore.RED + "$"	
+			bricks.append(brick)
+		elif(i%4==3):
+			brick=Bricks(21+6*i,15,3)
+			board[20+6*i][15]=Fore.GREEN + "|"
+			board[21+6*i][15]=Fore.GREEN + " "
+			board[22+(6*i)][15]=Fore.GREEN + "|"
+			for j in range(3):
+				board[20+(6*i)+j][14]=Fore.GREEN + "$"
+				board[20+(6*i)+j][16]=Fore.GREEN + "$"	
+			bricks.append(brick)
+		else:
+			brick=Bricks(21+6*i,15,1)
+			board[20+6*i][15]= "|"
+			board[21+6*i][15]= " "
+			board[22+(6*i)][15]= "|"
+			for j in range(3):
+				board[20+(6*i)+j][16]="$"
+				board[20+(6*i)+j][14]="$"
+			bricks.append(brick)
+	return bricks
+def UFObricks2():
+	bricks=[]
+	for i in range(15):
+		brick=Bricks(21+6*i,23,1)
+		board[20+6*i][23]="|"
+		board[21+6*i][23]=" "
+		board[22+(6*i)][23]="|"
+		for j in range(3):
+			board[20+(6*i)+j][22]="$"
+			board[20+(6*i)+j][24]="$"	
+		bricks.append(brick)
+	return bricks
+def UFObricks1():
+	bricks=[]
+	for i in range(15):
+		brick=Bricks(21+6*i,9,2)
+		board[20+6*i][9]=Fore.MAGENTA+"|"
+		board[21+6*i][9]=Fore.MAGENTA+" "
+		board[22+(6*i)][9]=Fore.MAGENTA+"|"
+		for j in range(3):
+			board[20+(6*i)+j][8]=Fore.MAGENTA+"$"
+			board[20+(6*i)+j][10]=Fore.MAGENTA+"$"	
+		bricks.append(brick)
 	return bricks

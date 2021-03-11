@@ -17,6 +17,7 @@ Run the game by 'python3 game.py'
 * **A** To move left.
 * **D** To move right.
 * **SPACE** To release the ball when it is on the paddle.
+* **S** Skip the current level.
 
 ## POWERUPS
 * **E** Expands the paddle by 2 units
