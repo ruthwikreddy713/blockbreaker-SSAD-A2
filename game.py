@@ -7,8 +7,10 @@ ballmov=False
 start = time.time()
 astart = time.time()
 brokenbricks=0
+bricks=level1bricks()
 powerupss=[]
 while(True):
+	inp = input_to(Get())
 	current=time.time()
 	if(current - astart > 1):
 		paddle.time=paddle.time+1
@@ -29,13 +31,38 @@ while(True):
 			"┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n",
 			"You Lost\n")
 		break
-	elif(brokenbricks==len(bricks)):
+	elif((brokenbricks==len(bricks) and paddle.level<2) or inp=='s'):
+		ballmov=False
+		for powerup in powerupss:
+			if(powerup.active==2):	
+				if(powerup.name=='S'):
+					shrinkpaddle.deactivate(powerup)
+				elif(powerup.name=='F'):
+					fastball.deactivate(powerup)
+				elif(powerup.name=='E'):
+					expandpaddle.deactivate(powerup)
+				elif(powerup.name=='T'):
+					passthrough.deactivate(powerup)
+				elif(powerup.name=='P'):
+					paddlegrab.deactivate(powerup)						
+			board[powerup.x][powerup.y]=""
+		board[ball.px][ball.py]=""
+		ball.prev="X"
+		ball.newlevel()
+		powerupss.clear()
+		tempscore=paddle.score
+		for brick in bricks:
+			brick.brokenbrick()
+		paddle.score=tempscore
+		paddle.level=paddle.level+1;
+		bricks.clear()
+		bricks=level2bricks()
+	elif(paddle.level==3):
 		print(" ___ _   _  ___ ___ ___  ___ ___ \n",
 			"/ __| | | |/ __/ __/ _ \/ __/ __|\n",
 			"\__ \ |_| | (_| (_|  __/\__ \__ \n",
 			"|___/\__,_|\___\___\___||___/___/)\n")
-		break		
-	inp = input_to(Get())
+		break				
 	if (ballmov==False):
 		if(inp=='a'):
 			paddle.left()

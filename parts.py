@@ -10,12 +10,13 @@ for i in range(120):
 		row.append("")
 	board.append(row)
 class Paddle:
-	def __init__(self,x,lent,lives,time,score):
+	def __init__(self,x,lent,lives,time,score,level):
 		self.x=x
 		self.lent=lent 
 		self.lives=lives
 		self.time=time
 		self.score=score
+		self.level=level
 	def left(self):
 		if(self.x>=1):
 			#self.x = self.x - 1
@@ -36,7 +37,7 @@ class Paddle:
 				#swap(board[self.x+i][39],board[self.x][39])
 			self.x= self.x +1 
 			board[self.x-1][39]=""
-paddle= Paddle(randint(1,111),7,3,0,0)
+paddle= Paddle(randint(1,111),7,3,0,0,1)
 #board[10][10]="Y"
 #print((board[10][10]),end="en")
 for i in range(paddle.lent):
@@ -114,6 +115,21 @@ class Ball:
 		for i in range(paddle.lent):
 			board[paddle.x+i][39]=""
 		paddle.lives=paddle.lives-1
+		paddle.x = randint(0,112)
+		paddle.lent = 7
+		for i in range(paddle.lent):
+			board[paddle.x+i][39]="X"
+		board[self.px][self.py]=""
+		self.px=randint(paddle.x,paddle.x + paddle.lent-1)
+		self.py=39
+		self.vx=0
+		self.vy=0
+		self.passthrough=0
+		self.prev=board[self.px][self.py]
+		board[self.px][self.py]="*"
+	def newlevel(self):
+		for i in range(paddle.lent):
+			board[paddle.x+i][39]=""
 		paddle.x = randint(0,112)
 		paddle.lent = 7
 		for i in range(paddle.lent):
@@ -251,42 +267,136 @@ class Unbreakablebrick(Bricks):
 	'''def __init__(self):
 		Bricks.__init__(self)
 		Bricks.strength=-1'''
-bricks=[]
-for i in range(15):
-	brick=Bricks(12+6*i,7,2)
-	board[11+6*i][7]= Fore.MAGENTA + "|"
-	board[12+6*i][7]= Fore.MAGENTA + " "
-	board[13+(6*i)][7]=Fore.MAGENTA + "|"
-	for j in range(3):
-		board[11+(6*i)+j][6]=Fore.MAGENTA + "$"
-		board[11+(6*i)+j][8]=Fore.MAGENTA + "$"
-	bricks.append(brick)
-#bricks2=[]
-for i in range(15):
-	if(i%4==0):
-		brick=Unbreakablebrick(21+6*i,11,-1)
-		board[20+6*i][11]=Fore.RED + "|"
-		board[21+6*i][11]=Fore.RED + " "
-		board[22+(6*i)][11]=Fore.RED + "|"
+class UFO:
+	def __init__(self,x,y,strength,lent):
+		self.x=x
+		self.y=y
+		self.strength=strength
+		self.lent=lent
+	def moveleft(self):
+		if(self.x>=1):	
+			for i in range(self.lent):
+				for j in range(3):
+					temp= board[self.x+i][2+j]
+					board[self.x+i][2+j]=board[self.x+i-1][2+j]
+					board[self.x+i-1][2+j]=temp
+					#board[self.x+i-1][39]="X"
+			self.x= self.x-1
+	def moveright(self):
+		if(self.x + self.lent< 118):
+			#self.x= self.x +1 
+			for i in range(1,self.lent+1):
+				for j in range(3):
+					temp=board[self.x][2+j]
+					board[self.x][2+j]=board[self.x+i][2+j]
+					board[self.x+i][2+j]=temp
+				#swap(board[self.x+i][39],board[self.x][39])
+		self.x= self.x +1 	 
+	def initialse(self):
+		for i in range(self.lent):
+			board[paddle.x][2]="X"
+			board[paddle.x][4]="X"
+		board[paddle.X][3]="X"
+		board[paddle.X+1][3]="U"
+		board[paddle.X+2][3]="F"
+		board[paddle.x+3][3]="O"
+		board[paddle.x+4][3]="O"
+		board[paddle.x+5][3]="O"
+		board[paddle.x+6][3]="X"
+class Bomb:
+	def __init__(self,x,y,prev):
+		self.x=x
+		self.y=y
+		self.prev=prev
+	def drop(self):
+		if(self.y <= 38):
+			board[self.x][self.y]=self.prev
+			self.y = self.y+1
+			board[self.x][self.y]=self.name
+	def collisionwithpaddle(self):
+		if self.y==39 and self.x >= paddle.x and self.x < paddle.x + paddle.lent:
+			board[self.x][self.y]="X"
+			return True
+		return False
+def level1bricks():	
+	bricks=[]
+	for i in range(10):
+		brick=Bricks(12+6*i,7,2)
+		board[11+6*i][7]= Fore.MAGENTA + "|"
+		board[12+6*i][7]= Fore.MAGENTA + " "
+		board[13+(6*i)][7]=Fore.MAGENTA + "|"
 		for j in range(3):
-			board[20+(6*i)+j][10]=Fore.RED + "$"
-			board[20+(6*i)+j][12]=Fore.RED + "$"	
+			board[11+(6*i)+j][6]=Fore.MAGENTA + "$"
+			board[11+(6*i)+j][8]=Fore.MAGENTA + "$"
 		bricks.append(brick)
-	elif(i%4==3):
-		brick=Bricks(21+6*i,11,3)
-		board[20+6*i][11]=Fore.GREEN + "|"
-		board[21+6*i][11]=Fore.GREEN + " "
-		board[22+(6*i)][11]=Fore.GREEN + "|"
+	#bricks2=[]
+	for i in range(10):
+		if(i%4==0):
+			brick=Unbreakablebrick(21+6*i,11,-1)
+			board[20+6*i][11]=Fore.RED + "|"
+			board[21+6*i][11]=Fore.RED + " "
+			board[22+(6*i)][11]=Fore.RED + "|"
+			for j in range(3):
+				board[20+(6*i)+j][10]=Fore.RED + "$"
+				board[20+(6*i)+j][12]=Fore.RED + "$"	
+			bricks.append(brick)
+		elif(i%4==3):
+			brick=Bricks(21+6*i,11,3)
+			board[20+6*i][11]=Fore.GREEN + "|"
+			board[21+6*i][11]=Fore.GREEN + " "
+			board[22+(6*i)][11]=Fore.GREEN + "|"
+			for j in range(3):
+				board[20+(6*i)+j][10]=Fore.GREEN + "$"
+				board[20+(6*i)+j][12]=Fore.GREEN + "$"	
+			bricks.append(brick)
+		else:
+			brick=Bricks(21+6*i,11,1)
+			board[20+6*i][11]= "|"
+			board[21+6*i][11]= " "
+			board[22+(6*i)][11]= "|"
+			for j in range(3):
+				board[20+(6*i)+j][10]="$"
+				board[20+(6*i)+j][12]="$"
+			bricks.append(brick)
+	return bricks
+def level2bricks():
+	bricks=[]
+	for i in range(15):
+		brick=Bricks(12+6*i,7,2)
+		board[11+6*i][7]= Fore.MAGENTA + "|"
+		board[12+6*i][7]= Fore.MAGENTA + " "
+		board[13+(6*i)][7]=Fore.MAGENTA + "|"
 		for j in range(3):
-			board[20+(6*i)+j][10]=Fore.GREEN + "$"
-			board[20+(6*i)+j][12]=Fore.GREEN + "$"	
+			board[11+(6*i)+j][6]=Fore.MAGENTA + "$"
+			board[11+(6*i)+j][8]=Fore.MAGENTA + "$"
 		bricks.append(brick)
-	else:
-		brick=Bricks(21+6*i,11,1)
-		board[20+6*i][11]= "|"
-		board[21+6*i][11]= " "
-		board[22+(6*i)][11]= "|"
-		for j in range(3):
-			board[20+(6*i)+j][10]="$"
-			board[20+(6*i)+j][12]="$"
-		bricks.append(brick)
+	#bricks2=[]
+	for i in range(15):
+		if(i%4==0):
+			brick=Unbreakablebrick(21+6*i,11,-1)
+			board[20+6*i][11]=Fore.RED + "|"
+			board[21+6*i][11]=Fore.RED + " "
+			board[22+(6*i)][11]=Fore.RED + "|"
+			for j in range(3):
+				board[20+(6*i)+j][10]=Fore.RED + "$"
+				board[20+(6*i)+j][12]=Fore.RED + "$"	
+			bricks.append(brick)
+		elif(i%4==3):
+			brick=Bricks(21+6*i,11,3)
+			board[20+6*i][11]=Fore.GREEN + "|"
+			board[21+6*i][11]=Fore.GREEN + " "
+			board[22+(6*i)][11]=Fore.GREEN + "|"
+			for j in range(3):
+				board[20+(6*i)+j][10]=Fore.GREEN + "$"
+				board[20+(6*i)+j][12]=Fore.GREEN + "$"	
+			bricks.append(brick)
+		else:
+			brick=Bricks(21+6*i,11,1)
+			board[20+6*i][11]= "|"
+			board[21+6*i][11]= " "
+			board[22+(6*i)][11]= "|"
+			for j in range(3):
+				board[20+(6*i)+j][10]="$"
+				board[20+(6*i)+j][12]="$"
+			bricks.append(brick)
+	return bricks

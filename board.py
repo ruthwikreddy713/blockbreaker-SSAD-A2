@@ -9,7 +9,9 @@ def printboard():
 	print("Time : ",end=" ")
 	print("\t" + str(paddle.time),end="\t")
 	print("Score : ",end="")
-	print("\t" + str(paddle.score),end="\n")
+	print("\t" + str(paddle.score),end="\t")
+	print("Level :",end="")
+	print("\t"+str(paddle.level),end="\n")
 	for i in range(0, 120):
 		print('\x1b[0;30;41m' + " " + '\x1b[0m', end="")
 	print("")
