@@ -285,6 +285,13 @@ class UFO(Bricks):
 		for i in range(3):
 			board[self.x-1+i][self.y-1]="X"
 			board[self.x-1+i][self.y+1]="X"
+	def removefromthatplace(self):
+		board[self.x-1][self.y]=""
+		board[self.x][self.y]=""
+		board[self.x+1][self.y]=""
+		for i in range(3):
+			board[self.x-1+i][self.y-1]=""
+			board[self.x-1+i][self.y+1]=""		
 ufo=UFO(paddle.x+2,4,3)
 class Bomb:
 	def __init__(self,x,y,prev):
@@ -294,8 +301,11 @@ class Bomb:
 	def drop(self):
 		if(self.y <= 38):
 			board[self.x][self.y]=self.prev
+			self.prev=board[self.x][self.y+1]
 			self.y = self.y+1
-			board[self.x][self.y]=self.name
+			board[self.x][self.y]="B"
+		else:
+			board[self.x][self.y]=""
 	def collisionwithpaddle(self):
 		if self.y==39 and self.x >= paddle.x and self.x < paddle.x + paddle.lent:
 			board[self.x][self.y]="X"

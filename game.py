@@ -10,7 +10,10 @@ brokenbricks=0
 bricks=level1bricks()
 powerupss=[]
 skip=0
+bombs=[]
 once=True
+bombdrop=0
+lostlife=0
 while(True):
 	inp = input_to(Get())
 	current=time.time()
@@ -21,7 +24,7 @@ while(True):
 		if(skip!=0):
 			paddle.level=paddle.level+1
 		skip=skip+1
-	print(bricks)
+	#print(bricks)
 	if(paddle.lives==0 or paddle.time>500):
 		print("┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n",
 			"███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀\n",
@@ -155,6 +158,10 @@ while(True):
 				ball.prev="X"
 				ball.newlife()
 				powerupss.clear()
+				if(paddle.level==3):
+					ufo.removefromthatplace()
+					ufo.x=paddle.x+1
+					ufo.initialise()
 			elif(val==1):
 				for powerup in powerupss:
 					if(powerup.name=="P" and powerup.active==4):
@@ -247,12 +254,34 @@ while(True):
 						if(ufo.strength==6):
 							tempbricks=UFObricks2()
 							bricks+=tempbricks
-							print(len(bricks))
+							#print(len(bricks))
 						if(ufo.strength==3):
 							tempbricks=UFObricks1()
 							bricks=tempbricks
 						if(ufo.strength==0):
 							paddle.level=paddle.level+1
+					if(current-bombdrop>3):
+						print("Hello")
+						bombdrop=current
+						bomb=Bomb(ufo.x,ufo.y+2,board[ufo.x][ufo.y+2])
+						board[bomb.x][bomb.y]="B"
+						bombs.append(bomb)
+					for bomb in bombs:
+						bomb.drop()
+						if(bomb.collisionwithpaddle()==True):
+							ballmov=False
+							board[ball.px][ball.py]=""
+							ball.prev="X"
+							ball.newlife()
+							ufo.removefromthatplace()
+							ufo.x=paddle.x+1
+							ufo.initialise()
+							lostlife=1
+					if(lostlife==1):
+						lostlife=0
+						for bomb in bombs:
+							board[bomb.x][bomb.y]=""
+						bombs.clear()
 				ball.move()
 				start=time.time()
 	printboard()
