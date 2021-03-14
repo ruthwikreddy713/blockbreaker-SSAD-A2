@@ -12,6 +12,9 @@ def printboard():
 	print("\t" + str(paddle.score),end="\t")
 	print("Level :",end="")
 	print("\t"+str(paddle.level),end="\n")
+	if(paddle.level==3):
+		print("UFO Health :",end="")
+		print("\t"+str(ufo.strength),end="\n")
 	for i in range(0, 120):
 		print('\x1b[0;30;41m' + " " + '\x1b[0m', end="")
 	print("")

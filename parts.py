@@ -139,10 +139,11 @@ class Ball:
 ball = Ball(randint(paddle.x,paddle.x + paddle.lent - 1),39,0,0,"",0)
 board[ball.px][ball.py]="*"
 class Bricks:
-	def __init__ (self,x,y,strength):
+	def __init__ (self,x,y,strength,rainbow):
 		self.strength=strength
 		self.x=x
 		self.y=y
+		self.rainbow=rainbow
 	def collisionwithball(self):
 		#print(self.y,self.x,ball.px,ball.py)
 		if ball.py >= self.y -2  and ball.py < self.y+1 and ball.vy>0:
@@ -255,12 +256,38 @@ class Bricks:
 			for j in range(3):
 				board[self.x -1 +j][self.y-1]=Fore.MAGENTA + "$"
 				board[self.x -1 +j][self.y+1]=Fore.MAGENTA + "$"			
+	def PrintRainbow(self):
+		if(self.strength==1):
+			board[self.x+1][self.y]= "|"
+			board[self.x][self.y]= " "
+			board[self.x-1][self.y]= "|"
+			for j in range(3):
+				board[self.x-1+j][self.y-1]="$"
+				board[self.x-1+j][self.y+1]="$"
+		elif(self.strength==2):
+			board[self.x+1][self.y]=Fore.MAGENTA + "|"
+			board[self.x][self.y]=Fore.MAGENTA + " "
+			board[self.x-1][self.y]=Fore.MAGENTA + "|"
+			for j in range(3):
+				board[self.x-1+j][self.y-1]=Fore.MAGENTA +"$"
+				board[self.x-1+j][self.y+1]=Fore.MAGENTA +"$"
+		elif(self.strength==3):
+			board[self.x+1][self.y]=Fore.GREEN +  "|"
+			board[self.x][self.y]= Fore.GREEN + " "
+			board[self.x-1][self.y]= Fore.GREEN + "|"
+			for j in range(3):
+				board[self.x-1+j][self.y-1]=Fore.GREEN + "$"
+				board[self.x-1+j][self.y+1]=Fore.GREEN + "$"
+
 
 class Unbreakablebrick(Bricks):
 	pass
 	'''def __init__(self):
 		Bricks.__init__(self)
 		Bricks.strength=-1'''
+class Rainbrowbrick(Bricks):
+	pass
+
 class UFO(Bricks):
 	def moveleft(self):
 		if(self.x>=1):	
@@ -292,12 +319,13 @@ class UFO(Bricks):
 		for i in range(3):
 			board[self.x-1+i][self.y-1]=""
 			board[self.x-1+i][self.y+1]=""		
-ufo=UFO(paddle.x+2,4,3)
+ufo=UFO(paddle.x+2,4,9,0)
 class Bomb:
-	def __init__(self,x,y,prev):
+	def __init__(self,x,y,prev,active):
 		self.x=x
 		self.y=y
 		self.prev=prev
+		self.active=active
 	def drop(self):
 		if(self.y <= 38):
 			board[self.x][self.y]=self.prev
@@ -307,25 +335,38 @@ class Bomb:
 		else:
 			board[self.x][self.y]=""
 	def collisionwithpaddle(self):
-		if self.y==39 and self.x >= paddle.x and self.x < paddle.x + paddle.lent:
+		if self.y==39 and self.x >= paddle.x and self.x < paddle.x + paddle.lent and self.active==1:
 			board[self.x][self.y]="X"
+			self.active=0
 			return True
+		elif(self.y==39):
+			self.active=0
+			board[self.x][self.y]=""
 		return False
 def level1bricks():	
 	bricks=[]
-	for i in range(10):
-		brick=Bricks(12+6*i,7,2)
+	#RainbowBrick
+	rbrick=Bricks(6,7,2,1)
+	board[5][7]= Fore.MAGENTA + "|"
+	board[6][7]= Fore.MAGENTA + " "
+	board[7][7]=Fore.MAGENTA + "|"
+	for j in range(3):
+		board[5+j][6]=Fore.MAGENTA + "$"
+		board[5+j][8]=Fore.MAGENTA + "$"
+	bricks.append(rbrick)	
+	'''for i in range(10):
+		brick=Bricks(12+6*i,7,2,0)
 		board[11+6*i][7]= Fore.MAGENTA + "|"
 		board[12+6*i][7]= Fore.MAGENTA + " "
 		board[13+(6*i)][7]=Fore.MAGENTA + "|"
 		for j in range(3):
 			board[11+(6*i)+j][6]=Fore.MAGENTA + "$"
 			board[11+(6*i)+j][8]=Fore.MAGENTA + "$"
-		bricks.append(brick)
+		bricks.append(brick)'''
 	#bricks2=[]
 	for i in range(10):
 		if(i%4==0):
-			brick=Unbreakablebrick(21+6*i,11,-1)
+			brick=Unbreakablebrick(21+6*i,11,-1,0)
 			board[20+6*i][11]=Fore.RED + "|"
 			board[21+6*i][11]=Fore.RED + " "
 			board[22+(6*i)][11]=Fore.RED + "|"
@@ -334,7 +375,7 @@ def level1bricks():
 				board[20+(6*i)+j][12]=Fore.RED + "$"	
 			bricks.append(brick)
 		elif(i%4==3):
-			brick=Bricks(21+6*i,11,3)
+			brick=Bricks(21+6*i,11,3,0)
 			board[20+6*i][11]=Fore.GREEN + "|"
 			board[21+6*i][11]=Fore.GREEN + " "
 			board[22+(6*i)][11]=Fore.GREEN + "|"
@@ -343,7 +384,7 @@ def level1bricks():
 				board[20+(6*i)+j][12]=Fore.GREEN + "$"	
 			bricks.append(brick)
 		else:
-			brick=Bricks(21+6*i,11,1)
+			brick=Bricks(21+6*i,11,1,0)
 			board[20+6*i][11]= "|"
 			board[21+6*i][11]= " "
 			board[22+(6*i)][11]= "|"
@@ -355,7 +396,7 @@ def level1bricks():
 def level2bricks():
 	bricks=[]
 	for i in range(15):
-		brick=Bricks(12+6*i,7,2)
+		brick=Bricks(12+6*i,7,2,0)
 		board[11+6*i][7]= Fore.MAGENTA + "|"
 		board[12+6*i][7]= Fore.MAGENTA + " "
 		board[13+(6*i)][7]=Fore.MAGENTA + "|"
@@ -366,7 +407,7 @@ def level2bricks():
 	#bricks2=[]
 	for i in range(15):
 		if(i%4==0):
-			brick=Unbreakablebrick(21+6*i,11,-1)
+			brick=Unbreakablebrick(21+6*i,11,-1,0)
 			board[20+6*i][11]=Fore.RED + "|"
 			board[21+6*i][11]=Fore.RED + " "
 			board[22+(6*i)][11]=Fore.RED + "|"
@@ -375,7 +416,7 @@ def level2bricks():
 				board[20+(6*i)+j][12]=Fore.RED + "$"	
 			bricks.append(brick)
 		elif(i%4==3):
-			brick=Bricks(21+6*i,11,3)
+			brick=Bricks(21+6*i,11,3,0)
 			board[20+6*i][11]=Fore.GREEN + "|"
 			board[21+6*i][11]=Fore.GREEN + " "
 			board[22+(6*i)][11]=Fore.GREEN + "|"
@@ -384,7 +425,7 @@ def level2bricks():
 				board[20+(6*i)+j][12]=Fore.GREEN + "$"	
 			bricks.append(brick)
 		else:
-			brick=Bricks(21+6*i,11,1)
+			brick=Bricks(21+6*i,11,1,0)
 			board[20+6*i][11]= "|"
 			board[21+6*i][11]= " "
 			board[22+(6*i)][11]= "|"
@@ -397,7 +438,7 @@ def level3bricks():
 	bricks=[]
 	for i in range(15):
 		if(i%4==0):
-			brick=Unbreakablebrick(21+6*i,15,-1)
+			brick=Unbreakablebrick(21+6*i,15,-1,0)
 			board[20+6*i][15]=Fore.RED + "|"
 			board[21+6*i][15]=Fore.RED + " "
 			board[22+(6*i)][15]=Fore.RED + "|"
@@ -406,7 +447,7 @@ def level3bricks():
 				board[20+(6*i)+j][16]=Fore.RED + "$"	
 			bricks.append(brick)
 		elif(i%4==3):
-			brick=Bricks(21+6*i,15,3)
+			brick=Bricks(21+6*i,15,3,0)
 			board[20+6*i][15]=Fore.GREEN + "|"
 			board[21+6*i][15]=Fore.GREEN + " "
 			board[22+(6*i)][15]=Fore.GREEN + "|"
@@ -415,7 +456,7 @@ def level3bricks():
 				board[20+(6*i)+j][16]=Fore.GREEN + "$"	
 			bricks.append(brick)
 		else:
-			brick=Bricks(21+6*i,15,1)
+			brick=Bricks(21+6*i,15,1,0)
 			board[20+6*i][15]= "|"
 			board[21+6*i][15]= " "
 			board[22+(6*i)][15]= "|"
@@ -427,7 +468,7 @@ def level3bricks():
 def UFObricks2():
 	bricks=[]
 	for i in range(15):
-		brick=Bricks(21+6*i,23,1)
+		brick=Bricks(21+6*i,23,1,0)
 		board[20+6*i][23]="|"
 		board[21+6*i][23]=" "
 		board[22+(6*i)][23]="|"
@@ -439,7 +480,7 @@ def UFObricks2():
 def UFObricks1():
 	bricks=[]
 	for i in range(15):
-		brick=Bricks(21+6*i,9,2)
+		brick=Bricks(21+6*i,9,2,0)
 		board[20+6*i][9]=Fore.MAGENTA+"|"
 		board[21+6*i][9]=Fore.MAGENTA+" "
 		board[22+(6*i)][9]=Fore.MAGENTA+"|"

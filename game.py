@@ -1,4 +1,3 @@
-from board import *
 from parts import *
 from input import *
 from powerups import *
@@ -14,6 +13,34 @@ bombs=[]
 once=True
 bombdrop=0
 lostlife=0
+def printboard():
+	os.system('clear')
+	print("\n")
+	print("\tLives : ",end=" ")
+	print("\t" + str(paddle.lives) ,end="\t")
+	print("Time : ",end=" ")
+	print("\t" + str(paddle.time),end="\t")
+	print("Score : ",end="")
+	print("\t" + str(paddle.score),end="\t")
+	print("Level :",end="")
+	print("\t"+str(paddle.level),end="\n")
+	if(paddle.level==3):
+		print("UFO Health :",end="")
+		print("\t"+str(ufo.strength),end="\n")
+	for i in range(0, 120):
+		print('\x1b[0;30;41m' + " " + '\x1b[0m', end="")
+	print("")
+	for i in range(0,40):
+		print('\x1b[0;30;41m' + " " + '\x1b[0m', end="")
+		for j in range(118):
+			if(board[j][i]!=''):
+				print('\x1b[0;30;36m' + str(board[j][i]) + '\x1b[0m', end="")
+			else:
+				print(" ", end="")
+		print('\x1b[0;30;41m' + " " + '\x1b[0m', end="\n")
+	for i in range(0, 120):
+		print('\x1b[0;30;41m' + " " + '\x1b[0m', end="")
+	print("")	
 while(True):
 	inp = input_to(Get())
 	current=time.time()
@@ -94,7 +121,7 @@ while(True):
 			brick.brokenbrick()
 		paddle.score=tempscore
 		bricks.clear()
-		ufo=UFO(paddle.x,4,9)
+		ufo=UFO(paddle.x,4,9,0)
 		ufo.initialise()
 		bricks=level3bricks()
 	elif(paddle.level==4):
@@ -161,6 +188,10 @@ while(True):
 				if(paddle.level==3):
 					ufo.removefromthatplace()
 					ufo.x=paddle.x+1
+					for bomb in bombs:
+						bomb.active=0
+						board[bomb.x][bomb.y]=""
+					bombs.clear()
 					ufo.initialise()
 			elif(val==1):
 				for powerup in powerupss:
@@ -204,7 +235,12 @@ while(True):
 					if(brick.strength!=0):
 						prevx=ball.vx
 						prevy=ball.vy
+						if(brick.rainbow==1):
+							brick.strength=randint(1,3)
+							brick.PrintRainbow()
 						if(brick.collisionwithball()==True):
+							if(brick.rainbow==1):
+								brick.rainbow=0
 							if(ball.passthrough==0):
 								brick.strength=brick.strength-1
 								brick.printbricks()
@@ -248,7 +284,7 @@ while(True):
 								brokenbricks=brokenbricks+1
 				if(paddle.level==3):
 					ufocoll=ufo.collisionwithball()
-					if(ufocoll):
+					if(ufocoll==True):
 						if(ufo.strength!=0):
 							ufo.strength=ufo.strength-1
 						if(ufo.strength==6):
@@ -261,27 +297,31 @@ while(True):
 						if(ufo.strength==0):
 							paddle.level=paddle.level+1
 					if(current-bombdrop>3):
-						print("Hello")
+						#print("Hello")
 						bombdrop=current
-						bomb=Bomb(ufo.x,ufo.y+2,board[ufo.x][ufo.y+2])
+						bomb=Bomb(ufo.x,ufo.y+2,board[ufo.x][ufo.y+2],1)
 						board[bomb.x][bomb.y]="B"
 						bombs.append(bomb)
 					for bomb in bombs:
-						bomb.drop()
-						if(bomb.collisionwithpaddle()==True):
-							ballmov=False
-							board[ball.px][ball.py]=""
-							ball.prev="X"
-							ball.newlife()
-							ufo.removefromthatplace()
-							ufo.x=paddle.x+1
-							ufo.initialise()
-							lostlife=1
-					if(lostlife==1):
-						lostlife=0
-						for bomb in bombs:
-							board[bomb.x][bomb.y]=""
-						bombs.clear()
+						if(bomb.active==1):
+							bomb.drop()
+							#print(bomb.x,bomb.y,paddle.x)
+							if(bomb.collisionwithpaddle()==True):
+								#print("Failed")
+								ballmov=False
+								board[ball.px][ball.py]=""
+								ball.prev="X"
+								ball.newlife()
+								ufo.removefromthatplace()
+								ufo.x=paddle.x+1
+								ufo.initialise()
+								lostlife=1
+						if(lostlife==1):
+							lostlife=0
+							for bomb in bombs:
+								bomb.active=0
+								board[bomb.x][bomb.y]=""
+							bombs.clear()
 				ball.move()
 				start=time.time()
 	printboard()
