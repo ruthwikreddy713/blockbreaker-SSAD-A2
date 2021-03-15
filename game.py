@@ -13,6 +13,7 @@ bombs=[]
 once=True
 bombdrop=0
 lostlife=0
+lastbrickdropped=0
 def printboard():
 	os.system('clear')
 	print("\n")
@@ -71,6 +72,7 @@ while(True):
 	elif((brokenbricks==len(bricks) and paddle.level==1) or skip==1 or (brokenbricks==len(bricks) and paddle.level==2)):
 		skip=4
 		ballmov=False
+		lastbrickdropped=current
 		brokenbricks=0
 		for powerup in powerupss:
 			if(powerup.active==2):	
@@ -99,6 +101,7 @@ while(True):
 	elif(paddle.level==3 and once):
 		once=False
 		ballmov=False
+		lastbrickdropped=current
 		for powerup in powerupss:
 			if(powerup.active==2):	
 				if(powerup.name=='S'):
@@ -282,6 +285,15 @@ while(True):
 								ball.vy=prevy
 								brick.strength=0
 								brokenbricks=brokenbricks+1
+				if(current-lastbrickdropped>3):								
+					lastbrickdropped=current
+					for brick in bricks:
+						if(brick.strength!=0):
+							cs=brick.collisionwithpaddle()
+							if(cs==1):
+								paddle.lives=0
+								break
+							brick.Dropbrick()
 				if(paddle.level==3):
 					ufocoll=ufo.collisionwithball()
 					if(ufocoll==True):

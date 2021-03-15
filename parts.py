@@ -279,7 +279,17 @@ class Bricks:
 				board[self.x-1+j][self.y-1]=Fore.GREEN + "$"
 				board[self.x-1+j][self.y+1]=Fore.GREEN + "$"
 
-
+	def Dropbrick(self):
+		for i in range(3):
+			temp=board
+			board[self.x-1+i][self.y+2]=board[self.x-1+i][self.y-1]
+			board[self.x-1+i][self.y-1]=board[self.x-1+i][self.y-2]
+			board[self.x-1+i][self.y-2]=""
+		self.y=self.y+1
+	def collisionwithpaddle(self):
+		if self.y==37:
+			return 1
+		return 0
 class Unbreakablebrick(Bricks):
 	pass
 	'''def __init__(self):
