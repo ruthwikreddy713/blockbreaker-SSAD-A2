@@ -70,6 +70,14 @@ class passthrough(powerups):
 		ball.passthrough=ball.passthrough-1
 class paddlegrab(powerups):
 	pass
+class Shootingpaddle(powerups):
+	def activate(self):
+		self.time=time.time()
+		board[paddle.x][39]="C"
+		board[paddle.x+paddle.lent-1][39]="C"
+	def deactivate(self):
+		board[paddle.x][39]="X"
+		board[paddle.x+paddle.lent-1][39]="X"		
 		#self.active=3
 #class throughball(powerups):
 #	def activate(self):

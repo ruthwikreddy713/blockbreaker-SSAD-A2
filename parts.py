@@ -353,6 +353,26 @@ class Bomb:
 			self.active=0
 			board[self.x][self.y]=""
 		return False
+class Bullet:
+	def __init__(self,x,y,prev,active):
+		self.x=x
+		self.y=y
+		self.prev=prev
+		self.active=active
+	def move(self):
+		if(self.y>1):
+			board[self.x][self.y]=self.prev
+			self.prev=board[self.x][self.y-1]
+			self.y = self.y-1
+			board[self.x][self.y]="0"
+		else:
+			board[self.x][self.y]=""
+			self.active=0
+	def collisionwithbrick(self,brick):
+		if(self.y-1==brick.y-1 and self.x >= brick.x-1 and self.x <= brick.x+1 ):
+			return True
+		else:
+			return False
 def level1bricks():	
 	bricks=[]
 	#RainbowBrick
